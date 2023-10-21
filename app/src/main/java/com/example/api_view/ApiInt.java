@@ -7,5 +7,5 @@ import retrofit2.http.GET;
 
 public interface ApiInt {
     @GET("manga")
-    Call<ArrayList<Car>> getCarsList();
+    Call<ArrayList<Manga>> getMangaList();
 }
