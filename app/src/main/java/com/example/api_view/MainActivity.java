@@ -4,7 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
 import java.util.ArrayList;
 
@@ -14,40 +17,32 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     RecyclerView rv;
-    ApiInt apiInt;
+    Button addBtn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         rv = findViewById(R.id.list);
-        apiInt = ServiceBuilder.buildRequest().create(ApiInt.class);
+        addBtn = findViewById(R.id.addBtn);
 
-        Call<ArrayList<Manga>> getMangaList = apiInt.getMangaList();
 
-        getMangaList.enqueue(new Callback<ArrayList<Manga>>() {
+        addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onResponse(Call<ArrayList<Manga>> call, Response<ArrayList<Manga>> response) {
-                if (response.isSuccessful()){
-                    rv.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                    rv.setHasFixedSize(true);
-
-
-                    ArrayList<Manga> mangaList = response.body();
-                    System.out.println(mangaList.get(0).getName());
-                    System.out.println(mangaList.get(0).getImage());
-                    RecycleAdapter adapter = new RecycleAdapter(getApplicationContext(), mangaList);
-                    rv.setAdapter(adapter);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ArrayList<Manga>> call, Throwable t) {
-
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), AddManga.class);
+                startActivity(intent);
             }
         });
 
 
+        DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
+
+        rv.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        rv.setHasFixedSize(true);
+
+        RecycleAdapter adapter = new RecycleAdapter(getApplicationContext(), dataBaseHelper.getMangaList());
+        rv.setAdapter(adapter);
 
     }
 }
